@@ -1,0 +1,18 @@
+# Перевіряє, що опис PR містить рядок "Spec:" з посиланням на спеку.
+# Демонстрація правил процесу (тиждень 11). Учень розширює її сам.
+name: spec-link-check
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: PR description must reference a spec
+        env:
+          BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if ! printf '%s' "$BODY" | grep -Eq '^Spec:[[:space:]]*\S+'; then
+            echo "::error::Додай у опис PR рядок 'Spec: <шлях до спеки>' (або 'Spec: не застосовно')."
+            exit 1
+          fi
